@@ -1,4 +1,4 @@
-name             'chef-devtools'
+name             'devtools'
 maintainer       'YOUR_NAME'
 maintainer_email 'YOUR_EMAIL'
 license          'All rights reserved'

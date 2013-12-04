@@ -12,16 +12,20 @@ package 'git' do
   action :install
 end
 
+rbenv_home = ::File.join(node['devtool']['home'], ".rbenv")
+rbenv_plugin_dir = ::File.join(rbenv_home, 'plugins')
+ruby-build_dir = ::File.join(rbenv_plugin_dir, "ruby-build")
+
 git "rbenv" do
   repository 'https://github.com/sstephenson/rbenv.git'
-  destination node['devtool']['home'] + '/.rbenv'
+  destination rbenv_home
   reference "master"
   action :sync
   user node['devtool']['user']
   group node['devtool']['group']
 end
 
-directory node['devtool']['home'] + '/.rbenv/plugins' do
+directory rbenv_plugin_dir do
   owner node['devtool']['user']
   group node['devtool']['group']
   action :create
@@ -29,7 +33,7 @@ end
 
 git "ruby-build" do
   repository 'https://github.com/sstephenson/ruby-build.git'
-  destination node['devtool']['home'] + '/.rbenv/plugins/ruby-build'
+  destination ruby-build_dir
   reference "master"
   action :sync
   user node['devtool']['user']
@@ -37,8 +41,8 @@ git "ruby-build" do
 end
 
 bash_profile 'profile.addin' do
-  user 'vagrant'
-  content 'PATH='+node['devtool']['home']+'/.rbenv/shims:'+node['devtool']['home']+'/.rbenv/bin:$PATH'
+  user node['devtool']['user']
+  content "PATH=#{::File.join(rbenv_home, 'shims'}:#{::File.join(rbenv_home, 'bin'}:$PATH"
 end
 
 rbenv_ruby "Ruby 1.9.3" do
